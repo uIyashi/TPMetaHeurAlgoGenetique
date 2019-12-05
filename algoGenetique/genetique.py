@@ -80,7 +80,6 @@ class Solution:
             self.objDansBoites[self.xij[i]].append(i)
         self.calculerFitness()
 
-    # todo: calculer la fitness la OH
     # https://www.youtube.com/watch?v=_of6UVV4HGo&list=PLRqwX-V7Uu6bJM3VgzjNV5YxVxUwzALHV&index=5
     def calculerFitness(self):
         # La fitness devrait être entre 0 et 1
@@ -101,15 +100,6 @@ class Solution:
             if len(y) > 2:
                 self.fitness *= 0.8
 
-    def solutionValable(self):
-        for x in range(len(self.ykj)):
-            if self.espaceUtilise[x] > self.ykj[x]:
-                return False
-        for y in self.couleursBoites:
-            if len(y) > 2:
-                return False
-        return True
-
     def optimisationBoites(self):
         # Réduit la taille des boites au mieux.
         self.ykj = [max(Solution.capacites) for _ in range(len(Solution.objets))]
@@ -123,11 +113,14 @@ class Solution:
                     self.ykj[i] = max(Solution.capacites)
 
     def solutionValable(self):
-        # Une boite déborde
-        for x in range(len(self.espaceUtilise)):
+        # Test si une boite est en surcharge
+        for x in range(len(self.ykj)):
             if self.espaceUtilise[x] > self.ykj[x]:
                 return False
-        # 3+ couleurs dans une boite
+        # Test si il y a 3+ couleurs différentes dans une boite
+        for y in self.couleursBoites:
+            if len(y) > 2:
+                return False
         return True
 
     def __str__(self):
@@ -145,7 +138,6 @@ class Solution:
         return rep
 
 
-# todo: clean tout ça la
 class Bench:
     def __init__(self, file, population, mutation):
         with open(file, "r") as f:
@@ -197,6 +189,8 @@ class Bench:
         print("> Fin de la simulation. Temps écoulé: {}s\a\n".format(time.time() - debut))
         print("> Meilleure solution:\n")
         print(self.meilleureSolution)
+        # print("> Meilleure solution de la dernière génération:\n")
+        # print(self.generation[self.fitnesses.index(max(self.fitnesses))])
 
 
 if len(sys.argv) >= 2:
@@ -209,5 +203,5 @@ if __name__ == '__main__':
     TIMER = 60  # secondes
     POPULATION = 200  #
     MUTATION = 0.04
-    BENCH = Bench('./benches/{}.txt'.format(fichier), POPULATION, MUTATION)
+    BENCH = Bench('../benches/{}.txt'.format(fichier), POPULATION, MUTATION)
     BENCH.start(timer=TIMER, noprint=True)
