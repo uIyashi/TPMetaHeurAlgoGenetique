@@ -1,5 +1,5 @@
 # Algorithme génétique
-# Ledieu Clement
+# _Iyashi
 import random
 import sys
 import time
